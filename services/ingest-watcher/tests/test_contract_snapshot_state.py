@@ -157,6 +157,84 @@ def run_common_snapshot_state_tests(make_snapshot_state: SnapshotStateFactory):
         assert not state.exists("/foo/bar/baz.txt"), "File should not exist"
         assert not state.exists("/foo/bar"), "Directory should not exist"
 
+    def test_remove_directory_and_children_are_removed_recursively():
+        state = make_snapshot_state("/")
+        stats = SnapshotEntryStats(md5=md5("test".encode()).hexdigest(), size=100)
+
+        changed = state.add_file("/foo/a.txt", stats)
+        assert changed, "File should be added"
+        assert state.exists("/foo/a.txt"), "File should exist"
+
+        changed = state.add_file("/foo/bar/b.txt", stats)
+        assert changed, "File should be added"
+        assert state.exists("/foo/bar/b.txt"), "File should exist"
+
+        changed = state.add_file("/foo/bar/baz/c.txt", stats)
+        assert changed, "File should be added"
+        assert state.exists("/foo/bar/baz/c.txt"), "File should exist"
+
+        changed = state.add_file("/foo/bar/baz/d.txt", stats)
+        assert changed, "Directory should be added"
+        assert state.exists("/foo/bar/baz/d.txt"), "Directory should exist"
+
+        removed_files = state.remove_directory("/foo")
+        assert removed_files == ["/foo/a.txt", "/foo/bar/b.txt", "/foo/bar/baz/c.txt", "/foo/bar/baz/d.txt"], "Files should be removed"
+        assert not state.exists("/foo/a.txt"), "File should not exist"
+        assert not state.exists("/foo/bar/b.txt"), "File should not exist"
+        assert not state.exists("/foo/bar/baz/c.txt"), "File should not exist"
+        assert not state.exists("/foo/bar/baz/d.txt"), "Directory should not exist"
+        assert not state.exists("/foo/bar"), "Directory should not exist"
+        assert not state.exists("/foo/bar/baz"), "Directory should not exist"
+        assert not state.exists("/foo"), "Directory should not exist"
+    
+
+    def test_add_file_to_directory_and_get_children_of_root():
+        state = make_snapshot_state("/")
+        stats = SnapshotEntryStats(md5=md5("test".encode()).hexdigest(), size=100)
+
+        changed = state.add_file("/foo/a.txt", stats)
+        assert changed, "File should be added"
+        assert state.exists("/foo/a.txt"), "File should exist"
+
+        changed = state.add_file("/foo/bar/b.txt", stats)
+        assert changed, "File should be added"
+        assert state.exists("/foo/bar/b.txt"), "File should exist"
+
+        changed = state.add_file("/foo/bar/baz/c.txt", stats)
+        assert changed, "File should be added"
+        assert state.exists("/foo/bar/baz/c.txt"), "File should exist"
+
+        changed = state.add_file("/foo/bar/baz/d.txt", stats)
+        assert changed, "Directory should be added"
+        assert state.exists("/foo/bar/baz/d.txt"), "Directory should exist"
+
+        children = state.get_children("/")
+        assert children == ["/foo"], "Directory should have one children"
+    
+    def test_get_all_files_of_root():
+        state = make_snapshot_state("/")
+        stats = SnapshotEntryStats(md5=md5("test".encode()).hexdigest(), size=100)
+
+        changed = state.add_file("/foo/a.txt", stats)
+        assert changed, "File should be added"
+        assert state.exists("/foo/a.txt"), "File should exist"
+
+        changed = state.add_file("/foo/bar/b.txt", stats)
+        assert changed, "File should be added"
+        assert state.exists("/foo/bar/b.txt"), "File should exist"
+
+        changed = state.add_file("/foo/bar/baz/c.txt", stats)
+        assert changed, "File should be added"
+        assert state.exists("/foo/bar/baz/c.txt"), "File should exist"
+
+        changed = state.add_file("/foo/bar/baz/d.txt", stats)
+        assert changed, "Directory should be added"
+        assert state.exists("/foo/bar/baz/d.txt"), "Directory should exist"
+
+        files = state.get_all_files("/")
+        assert files == ["/foo/a.txt", "/foo/bar/b.txt", "/foo/bar/baz/c.txt", "/foo/bar/baz/d.txt"], "Files should be correct"
+
+
     return [
         test_file_does_not_exist,
         test_add_file_and_exists,
@@ -174,4 +252,7 @@ def run_common_snapshot_state_tests(make_snapshot_state: SnapshotStateFactory):
         test_children_of_empty_directory_are_empty,
         test_children_of_directory_with_one_file,
         test_remove_directory_and_children_are_removed,
+        test_remove_directory_and_children_are_removed_recursively,
+        test_add_file_to_directory_and_get_children_of_root,
+        test_get_all_files_of_root,
     ]

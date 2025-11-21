@@ -128,21 +128,47 @@ class InMemoryTreeSnapshotState:
         self._children[parent_idx].append(idx)
 
         return True
+    
+    def _remove_children(self, idx: int) -> list[str]:
+        """Remove children of an entry from the snapshot."""
+
+        removed_files: list[str] = list[str]()
+
+        for child_idx in self._children[idx]:
+            child_path = self._paths[child_idx]
+            if child_path is None:
+                continue
+
+            if self._is_dir[child_idx]:
+                removed_files.extend(self._remove_children(child_idx))
+            else:
+                removed_files.append(child_path)
+            
+            self._paths[child_idx] = None
+            self._is_dir[child_idx] = None
+            self._stats[child_idx] = None
+
+            del self._path_to_id[child_path]
+            del self._children[child_idx]
+
+        return removed_files
 
     def remove_directory(self, path: str) -> list[str]:
         """Remove a directory from the snapshot."""
         p = self._normalize_path(path)
         idx = self._path_to_id.get(p, None)
         if idx is None:
-            return []
+            return list[str]()
 
+        removed_files = self._remove_children(idx)
         self._paths[idx] = None
         self._is_dir[idx] = None
         self._stats[idx] = None
 
         del self._path_to_id[p]
         del self._children[idx]
-        return []
+
+        return removed_files
 
     def get_children(self, path: str) -> list[str]:
         """Get the children of a path in the snapshot."""
@@ -154,3 +180,26 @@ class InMemoryTreeSnapshotState:
         children = [self._paths[i] for i in self._children[idx]]
 
         return [c for c in children if c is not None]
+    
+    def get_all_files(self, root_path: str | None = None) -> list[str]:
+        """Get all files in the snapshot."""
+
+        if root_path is None:
+            root_path = self._root_path
+
+        root_idx = self._path_to_id.get(root_path, None)
+        if root_idx is None:
+            return []
+
+        children_path: list[str] = list[str]()
+        for child_idx in self._children[root_idx]:
+            child_path = self._paths[child_idx]
+            if child_path is None:
+                continue
+            
+            if self._is_dir[child_idx]:
+                children_path.extend(self.get_all_files(child_path))
+            else:
+                children_path.append(child_path)
+
+        return children_path

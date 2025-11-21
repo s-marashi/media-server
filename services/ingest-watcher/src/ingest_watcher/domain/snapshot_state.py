@@ -40,3 +40,7 @@ class SnapshotState(Protocol):
     def get_children(self, path: str) -> list[str]:
         """Get the children of a path in the snapshot."""
         ...
+
+    def get_all_files(self, root_path: str | None = None) -> list[str]:
+        """Get all files in the snapshot."""
+        ...
