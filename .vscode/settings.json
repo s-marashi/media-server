@@ -1,0 +1,43 @@
+{
+  // Auto-detect virtual environments in all service directories
+  "python.venvPath": ".",
+  "python.venvFolders": [
+    "services"
+  ],
+  
+  // Enable auto-selection of virtual environments
+  "python.autoComplete.extraPaths": [],
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.typeCheckingMode": "basic",
+  
+  // Test configuration - pytest for all services
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  
+  // Formatting and linting (you can configure per-service if needed)
+  "python.formatting.provider": "none",
+  "python.linting.enabled": true,
+  
+  // File associations
+  "files.associations": {
+    "*.toml": "toml",
+    "pyproject.toml": "toml"
+  },
+  
+  // Search exclusions
+  "search.exclude": {
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/uv.lock": true
+  },
+  
+  // File watcher exclusions
+  "files.watcherExclude": {
+    "**/.venv/**": true,
+    "**/__pycache__/**": true,
+    "**/uv.lock": true
+  }
+}
+

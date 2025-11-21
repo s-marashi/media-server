@@ -1,0 +1,52 @@
+{
+  "folders": [
+    {
+      "name": "Root",
+      "path": "."
+    },
+    {
+      "name": "Ingest Watcher",
+      "path": "./services/ingest-watcher"
+    }
+  ],
+  "settings": {
+    // Default Python settings for the workspace
+    "python.defaultInterpreterPath": "${workspaceFolder}/services/ingest-watcher/.venv/bin/python",
+    
+    // Python path configuration
+    "python.analysis.extraPaths": [
+      "${workspaceFolder}/services/ingest-watcher/src"
+    ],
+    
+    // Test configuration
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    
+    // Auto-detect virtual environments
+    "python.venvPath": ".",
+    "python.venvFolders": [
+      "services"
+    ],
+    
+    // Formatting and linting
+    "python.formatting.provider": "none",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": false,
+    "python.linting.mypyEnabled": false,
+    
+    // File associations
+    "files.associations": {
+      "*.toml": "toml",
+      "pyproject.toml": "toml"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "charliermarsh.ruff"
+    ]
+  }
+}
+
