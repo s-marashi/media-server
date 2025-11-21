@@ -24,6 +24,16 @@ class SnapshotEntryStats(BaseModel):
             raise ValueError("MD5 hash must contain only hexadecimal characters")
         return v.lower()
 
+    def __eq__(self, other: object) -> bool:
+        """Check if two SnapshotEntryStats are equal."""
+        if not isinstance(other, SnapshotEntryStats):
+            return False
+        return (
+            self.md5 == other.md5
+            and self.size == other.size
+            and self.mime == other.mime
+        )
+
 
 class Snapshot:
     """Entity representing a snapshot of a directory."""

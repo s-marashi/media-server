@@ -1,6 +1,9 @@
-from typing import Protocol
+from __future__ import annotations
 
-from ingest_watcher.domain.entities import SnapshotEntryStats
+from typing import TYPE_CHECKING, Protocol
+
+if TYPE_CHECKING:
+    from ingest_watcher.domain.entities import SnapshotEntryStats
 
 
 class SnapshotState(Protocol):

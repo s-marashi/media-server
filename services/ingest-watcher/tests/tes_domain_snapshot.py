@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from ingest_watcher.domain.entities import FileEntry, Snapshot
+from ingest_watcher.domain.entities import Snapshot, SnapshotEntryStats
 from ingest_watcher.domain.events import SnapshotEventType
 from ingest_watcher.domain.services import diff_snapshots
 
@@ -15,8 +15,7 @@ def make_snapshot():
 
     def _make_snapshot(root: Path, files_dict: dict[str, dict]) -> Snapshot:
         files = {
-            path: FileEntry(
-                path=path,
+            path: SnapshotEntryStats(
                 md5=info["md5"],
                 size=info.get("size", 0),
                 mime=info.get("mime", ""),
